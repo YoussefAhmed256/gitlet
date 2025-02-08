@@ -35,6 +35,10 @@ public class Commit implements Serializable {
         return hash;
     }
 
+    public boolean containsFile(String fileName) {
+        return trackedFiles.containsKey(fileName);
+    }
+
     public String getMessage() {return message;}
 
     @Override
