@@ -8,25 +8,25 @@ import java.util.stream.Collectors;
 import static gitlet.Utils.*;
 
 public class CommitStore {
-    private File commitDir;
+    private final File COMMIT_DIR;
     public CommitStore(File commitDir) {
-        this.commitDir = commitDir;
+        this.COMMIT_DIR = commitDir;
         if(!commitDir.exists()) {
             commitDir.mkdirs();
         }
     }
 
     public void saveCommit (Commit commit){
-        File commitFile = join(commitDir,commit.getHash());
+        File commitFile = join(COMMIT_DIR,commit.getHash());
         writeObject(commitFile, commit);
     }
 
 
     public Commit getCommitByHash(String commitId) {
-        if (commitDir == null) {
+        if (COMMIT_DIR == null) {
             return null;
         }
-        File commitFile = join(commitDir, commitId);
+        File commitFile = join(COMMIT_DIR, commitId);
         if(commitFile.exists()) {
             return readObject(commitFile, Commit.class);
         }
@@ -50,13 +50,13 @@ public class CommitStore {
 
 
     public List<Commit> getAllCommits(){
-        return Objects.requireNonNull(plainFilenamesIn(commitDir)).stream()
+        return Objects.requireNonNull(plainFilenamesIn(COMMIT_DIR)).stream()
                 .map(hash -> getCommitByHash(hash))
                 .collect(Collectors.toList());
     }
 
     public List<String> getAllCommitHashes() {
-        return Objects.requireNonNull(plainFilenamesIn(commitDir));
+        return Objects.requireNonNull(plainFilenamesIn(COMMIT_DIR));
     }
 
 }

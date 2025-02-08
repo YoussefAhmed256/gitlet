@@ -2,18 +2,20 @@ package gitlet;
 
 import java.io.File;
 
+import static gitlet.Utils.writeContents;
+
 public class Head {
-    File headDir;
+    private final File HEAD_DIR;
 
     public Head(File headDir) {
-        this.headDir = headDir;
+        this.HEAD_DIR = headDir;
     }
 
     public File getHeadDir() {
-        return headDir;
+        return HEAD_DIR;
     }
 
-    public void setHeadDir(File headDir) {
-        this.headDir = headDir;
+    public void setHead(Branch branch) {
+        writeContents(HEAD_DIR,branch.getName());
     }
 }

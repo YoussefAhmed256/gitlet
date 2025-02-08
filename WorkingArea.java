@@ -5,16 +5,16 @@ import java.io.File;
 import static gitlet.Utils.*;
 
 public class WorkingArea {
-    private File workingDir;
+    private final File WORKING_DIR;
 
     public WorkingArea(File workingDir) {
-        this.workingDir = workingDir;
+        this.WORKING_DIR = workingDir;
     }
 
     public void SaveFile(File file) {
         String content=readContentsAsString(file);
         String hash =sha1(content);
-        File workingFile = join(workingDir, hash);
+        File workingFile = join(WORKING_DIR, hash);
         writeContents(workingFile,content);
     }
     public boolean DeleteFile(String fileName) {
@@ -23,11 +23,11 @@ public class WorkingArea {
     }
 
     private File GetFile(String fileName) {
-        File file=join(workingDir, fileName);
+        File file=join(WORKING_DIR, fileName);
         return file;
     }
     public void Clear() {
-        for (String name : workingDir.list()) GetFile(name).delete();
+        for (String name : WORKING_DIR.list()) GetFile(name).delete();
     }
 
 }

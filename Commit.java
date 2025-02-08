@@ -18,7 +18,7 @@ public class Commit implements Serializable {
     private Date timeStamp;
     private TreeMap<String,String>trackedFiles;
 
-    public Commit(String message, String firstParent, String secondParent, Date timeStamp, TreeMap<String, String> trackedFiles) {
+    public Commit(String message, String firstParent, String secondParent, Date timeStamp) {
         this.message = message;
         this.firstParent = firstParent;
         this.secondParent = secondParent;
@@ -36,13 +36,6 @@ public class Commit implements Serializable {
     }
 
     public String getMessage() {return message;}
-
-
-    public void saveCommit(File commitsDirectory) {
-        File commitFile = join(commitsDirectory, hash);
-        writeObject(commitFile, this);
-    }
-
 
     @Override
     public String toString() {

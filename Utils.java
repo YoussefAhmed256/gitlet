@@ -241,4 +241,9 @@ class Utils {
         System.out.printf(msg, args);
         System.out.println();
     }
+
+    static void exitWithMessage(String msg) {
+        System.out.println(msg);
+        System.exit(0);
+    }
 }
