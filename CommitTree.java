@@ -12,8 +12,8 @@ public class CommitTree implements Serializable {
     public void addCommit(String commit , String parent) {
         parentOf.put(commit, parent);
     }
-    public TreeMap<String , String> getCommitTree() {
-        return parentOf;
+    public String getParent(String commit) {
+        return parentOf.get(commit);
     }
     public boolean containsCommit(String commit) {
         return parentOf.containsKey(commit);
