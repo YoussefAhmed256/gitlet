@@ -18,13 +18,13 @@ public class Commit implements Serializable {
     private Date timeStamp;
     private TreeMap<String,String>trackedFiles;
 
-    public Commit(String message, String firstParent, String secondParent, Date timeStamp) {
+    public Commit(String message, String firstParent, String secondParent, Date timeStamp , TreeMap<String,String>trackedFiles) {
         this.message = message;
         this.firstParent = firstParent;
         this.secondParent = secondParent;
         this.hash = Utils.sha1(message, firstParent, secondParent, timeStamp) ;
         this.timeStamp = timeStamp;
-        this.trackedFiles = trackedFiles;
+        this.trackedFiles = (trackedFiles != null) ? trackedFiles : new TreeMap<>();
     }
 
     public Map<String, String> getTrackedFiles() {

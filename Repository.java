@@ -41,13 +41,13 @@ public class Repository {
         ADDITION_Dir.mkdirs();
         BRANCH_DIR.mkdirs();
 
-        Commit initialCommit =new Commit("initial commit",null,null,new Date(0));
+        Commit initialCommit =new Commit("initial commit",null,null,new Date(0),null);
         commitStore.saveCommit(initialCommit);
 
         Branch masterBranch =new Branch("master",initialCommit.getHash());
         branchStore.saveBranch(masterBranch);
-
     }
+
 
 
 }
