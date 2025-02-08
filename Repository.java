@@ -103,8 +103,26 @@ public class Repository {
 
     }
 
+    public void rm (String fileName){
+        checkInitializedGitletDirectory();
+        boolean isStaged = stagingArea.isStagedForAddition(fileName);
+        boolean isInTheLastCommit = getCurrentCommit().containsFile(fileName);
+
+        if(!isStaged && !isInTheLastCommit){
+            exitWithMessage("No reason to remove this file.");
+        }
+        File fileToBeRemoved = workingArea.GetFile(fileName);
+        if (isInTheLastCommit){
+            stagingArea.StageFileForRemoval(fileToBeRemoved);
+        }
+        if (isStaged){
+            stagingArea.UnstageFileForAddition(fileToBeRemoved);
+        }
+        workingArea.DeleteFile(fileName);
+    }
 
 
+    /*Utils */
     private void checkInitializedGitletDirectory() {
         if (!GITLET_DIR.exists()) {
             exitWithMessage("Not in an initialized Gitlet directory.");
