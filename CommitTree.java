@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.util.TreeMap;
 
 public class CommitTree implements Serializable {
-    private TreeMap<String , String> commitTree;
+    private TreeMap<String , String> parentOf;
 
     public CommitTree() {
-        this.commitTree = new TreeMap<>();
+        this.parentOf = new TreeMap<>();
     }
     public void addCommit(String commit , String parent) {
-        commitTree.put(commit, parent);
+        parentOf.put(commit, parent);
     }
     public TreeMap<String , String> getCommitTree() {
-        return commitTree;
+        return parentOf;
     }
     public boolean containsCommit(String commit) {
-        return commitTree.containsKey(commit);
+        return parentOf.containsKey(commit);
     }
 
 }
