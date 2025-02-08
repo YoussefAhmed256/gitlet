@@ -11,7 +11,7 @@ public class BranchStore {
     private final File BRANCH_DIR;
 
     public BranchStore(File branchDirectory) {
-        this.BRANCH_DIR = branchDirectory;
+                this.BRANCH_DIR = branchDirectory;
     }
 
     public Branch getBranch(String branchName) {

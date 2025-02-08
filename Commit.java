@@ -23,11 +23,11 @@ public class Commit implements Serializable {
         this.firstParent = firstParent;
         this.secondParent = secondParent;
         this.hash = Utils.sha1(message, firstParent, secondParent, timeStamp) ;
-        this.timeStamp = timeStamp;
+        this.timeStamp = (timeStamp != null) ? timeStamp : new Date();;
         this.trackedFiles = (trackedFiles != null) ? trackedFiles : new TreeMap<>();
     }
 
-    public Map<String, String> getTrackedFiles() {
+    public TreeMap<String, String> getTrackedFiles() {
         return trackedFiles;
     }
 

@@ -22,7 +22,7 @@ public class WorkingArea {
         return file.delete();
     }
 
-    private File GetFile(String fileName) {
+    public File GetFile(String fileName) {
         File file=join(WORKING_DIR, fileName);
         return file;
     }

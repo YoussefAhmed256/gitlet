@@ -77,7 +77,7 @@ public class StagingArea {
     }
 
     public boolean IsEmpty(){
-        return plainFilenamesIn(ADDITION_Dir).isEmpty()&& plainFilenamesIn(REMOVAL_Dir).isEmpty() ;
+        return plainFilenamesIn(ADDITION_Dir).isEmpty() || plainFilenamesIn(REMOVAL_Dir).isEmpty() ;
     }
     
 }

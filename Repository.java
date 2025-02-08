@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.util.Date;
+import java.util.SplittableRandom;
+import java.util.TreeMap;
 
 import static gitlet.Utils.*;
 
@@ -48,6 +50,73 @@ public class Repository {
         branchStore.saveBranch(masterBranch);
     }
 
+    public void add(String fileName){
+        checkInitializedGitletDirectory();
+        File workingFile = workingArea.GetFile(fileName);
+        if (workingFile==null){
+            exitWithMessage("File does not exist.");
+        }
+        String commitedFileHash = getCurrentCommit().getTrackedFiles().get(fileName);
+        String hash = sha1(readContents(workingFile));
+
+        if (!commitedFileHash.equals(hash)){
+            stagingArea.StageFileForAddition(workingFile);
+        }
+        else {
+            stagingArea.UnstageFileForAddition(workingFile);
+        }
+        stagingArea.UnstageFileForRemoval(workingFile);
+    }
+
+    public void commit (String message){
+        checkInitializedGitletDirectory();
+        commit(message,null);
+    }
+
+    public void commit (String message , String secondParent){
+        if (message.isEmpty()) {
+            exitWithMessage("Please enter a commit message.");
+        }
+
+        if (stagingArea.IsEmpty()) {
+            exitWithMessage("No changes added to the commit.");
+        }
+
+        TreeMap<String,String>Tracked = getCurrentCommit().getTrackedFiles();
+
+        for (File file : ADDITION_Dir.listFiles()) {
+            Tracked.put(file.getName(),sha1(readContents(file)));
+            stagingArea.UnstageFileForAddition(file);
+        }
+
+        for (File file : REMOVAL_DIR.listFiles()) {
+            Tracked.remove(file.getName());
+            stagingArea.UnstageFileForRemoval(file);
+        }
+
+        Commit newcommit = new Commit(message,getCurrentCommit().getHash(),secondParent,null,Tracked) ;
+        commitStore.saveCommit(newcommit);
+
+        Branch newBranch = getCurrentBranch();
+        newBranch.setCommitHash(sha1(newcommit.getHash()));
+        branchStore.saveBranch(newBranch);
+
+    }
 
 
+
+    private void checkInitializedGitletDirectory() {
+        if (!GITLET_DIR.exists()) {
+            exitWithMessage("Not in an initialized Gitlet directory.");
+        }
+    }
+
+    public Branch getCurrentBranch(){
+        return branchStore.getBranch(head.getHead());
+    }
+
+    private Commit getCurrentCommit(){
+        String hash = getCurrentBranch().getCommitHash();
+        return commitStore.getCommitByHash(hash) ;
+    }
 }

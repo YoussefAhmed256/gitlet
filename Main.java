@@ -5,17 +5,18 @@ package gitlet;
  */
 public class Main {
     public static void main(String[] args) {
+        Repository repo = new Repository();
         // TODO: what if args is empty?
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
-                // TODO: handle the `init` command
+                repo.init();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
+                repo.add(args[1]);
                 break;
             case "commit":
-
+                repo.commit(args[1]);
                 break;
             case "merge":
 
