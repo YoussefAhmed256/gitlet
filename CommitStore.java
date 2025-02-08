@@ -31,10 +31,14 @@ public class CommitStore {
             return readObject(commitFile, Commit.class);
         }
         // search by hash prefix
-        return getAllCommits().stream()
-                .filter(commit -> commit.getHash().startsWith(commitId))
+        String targetCommitHash = getAllCommitHashes().stream()
+                .filter(hash -> hash.startsWith(commitId))
                 .findFirst()
                 .orElse(null);
+        if(targetCommitHash != null){
+            return readObject(commitFile, Commit.class);
+        }
+        return null;
     }
 
 
