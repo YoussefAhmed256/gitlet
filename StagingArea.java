@@ -41,14 +41,12 @@ public class StagingArea {
         File stagedFile = Utils.join(REMOVAL_Dir, name);
         return stagedFile;
     }
-    public boolean IsStagedForAddition(File file){
-        String name=file.getName();
-        File stagedFile = Utils.join(ADDITION_Dir, name);
+    public boolean isStagedForAddition(String fileName){
+        File stagedFile = Utils.join(ADDITION_Dir, fileName);
         return stagedFile.exists();
     }
-    public boolean IsStagedForRemoval(File file){
-        String name=file.getName();
-        File stagedFile = Utils.join(REMOVAL_Dir, name);
+    public boolean isStagedForRemoval(String fileName){
+        File stagedFile = Utils.join(REMOVAL_Dir, fileName);
         return stagedFile.exists();
     }
 
