@@ -35,10 +35,14 @@ public class Commit implements Serializable {
         return hash;
     }
 
+    public String getMessage() {return message;}
+
+
     public void saveCommit(File commitsDirectory) {
         File commitFile = join(commitsDirectory, hash);
         writeObject(commitFile, this);
     }
+
 
     @Override
     public String toString() {
