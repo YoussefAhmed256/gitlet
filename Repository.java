@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.SplittableRandom;
 import java.util.TreeMap;
@@ -27,7 +28,7 @@ public class Repository {
     StagingArea stagingArea = new StagingArea(ADDITION_Dir, REMOVAL_DIR);
     WorkingArea workingArea = new WorkingArea(WORKING_DIR);
     BranchStore branchStore = new BranchStore(BRANCH_DIR);
-
+    CommitTree commitTree = new CommitTree();
     /* TODO: fill in the rest of this class. */
 
     public void init (){
@@ -121,6 +122,14 @@ public class Repository {
         workingArea.DeleteFile(fileName);
     }
 
+    public void log(){
+        checkInitializedGitletDirectory();
+        String currentCommitHash = getCurrentCommit().getHash();
+        while(currentCommitHash !=null){
+            currentCommitHash = commitTree.getParent(currentCommitHash);
+            System.out.println(currentCommitHash);
+        }
+    }
 
     /*Utils */
     private void checkInitializedGitletDirectory() {
