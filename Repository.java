@@ -5,7 +5,6 @@ import static gitlet.Utils.*;
 
 public class Repository {
 
-
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
