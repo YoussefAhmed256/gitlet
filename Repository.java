@@ -131,6 +131,12 @@ public class Repository {
         }
     }
 
+    public void globalLog(){
+        checkInitializedGitletDirectory();
+        commitStore.getAllCommitHashes()
+                .forEach(System.out::println);
+    }
+
     /*Utils */
     private void checkInitializedGitletDirectory() {
         if (!GITLET_DIR.exists()) {
