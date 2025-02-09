@@ -22,16 +22,28 @@ public class Main {
 
                 break;
             case "branch":
-
+                repo.branch(args[1]);
                 break;
             case "rm":
-
+                repo.rm(args[1]);
                 break;
             case "rm-branch":
-
+                repo.rmBranch(args[1]);
                 break;
             case "checkout":
 
+                break;
+            case "log":
+                repo.log();
+                break;
+            case "global-log" :
+                repo.globalLog();
+                break;
+            case "find":
+                repo.find(args[1]);
+                break;
+            case "status":
+                repo.status();
                 break;
         }
     }
