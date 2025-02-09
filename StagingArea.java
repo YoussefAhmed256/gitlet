@@ -5,6 +5,8 @@ import gitlet.Utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static gitlet.Utils.*;
 
@@ -74,6 +76,17 @@ public class StagingArea {
         return files;
     }
 
+    public void clear(){
+        for (String fileName : GetAllFilesForAddition()) {
+            File stagedFile = join(ADDITION_Dir, fileName);
+            UnstageFileForAddition(stagedFile);
+        }
+        for (String fileName : GetAllFilesForRemoval()) {
+            File stagedFile = join(REMOVAL_Dir, fileName);
+            UnstageFileForRemoval(stagedFile);
+        }
+    }
+    
     public boolean IsEmpty(){
         return plainFilenamesIn(ADDITION_Dir).isEmpty() || plainFilenamesIn(REMOVAL_Dir).isEmpty() ;
     }
