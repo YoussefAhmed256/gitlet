@@ -31,10 +31,12 @@ public class Main {
                 repo.rmBranch(args[1]);
                 break;
             case "checkout":
-                if(args.length == 3)
+                if (args.length == 1)
+                    repo.checkoutBranch(args[0]);
+                if(args.length == 3 && args[1] == "--")
                     repo.checkoutFile(args[2]);
-                else if (args.length == 4)
-                    repo.checkoutFile(args[1], args[3]);
+                else if (args.length == 4 && args[2] == "--")
+                    repo.checkoutFile(args[3], args[1]);
                 break;
             case "log":
                 repo.log();

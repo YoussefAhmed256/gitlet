@@ -202,7 +202,7 @@ public class Repository {
         checkInitializedGitletDirectory();
         Commit commit = commitStore.getCommitByHash(commitHash);
         if(commit == null){
-            exitWithMessage("No commit found.");
+            exitWithMessage("No commit with that id exists.");
         }
         if(!commit.containsFile(fileName)){
             exitWithMessage("File does not exist in the last commit");
@@ -217,12 +217,51 @@ public class Repository {
         checkoutFile(fileName , getCurrentCommit().getHash());
     }
 
+    public void checkoutCommit(String commitHash) {
+        checkInitializedGitletDirectory();
+        Commit targetCommit = commitStore.getCommitByHash(commitHash);
+        if (targetCommit == null) {
+            exitWithMessage("No commit with that id exists.");
+        }
+        Commit currentCommit = getCurrentCommit();
+        List<String> workingFileNames = workingArea.getAllFileNames();
+        for (String fileName : workingFileNames) {
+            if (!currentCommit.containsFile(fileName) && targetCommit.containsFile(fileName)) {
+                exitWithMessage("There is an untracked file in the way; delete it, or add and commit it first.");
+            }
+        }
+        workingArea.clear();
+        stagingArea.clear();
+        for (String fileName : targetCommit.getTrackedFiles().keySet()) {
+            checkoutFile(fileName , targetCommit.getHash());
+        }
+    }
+
+    public void checkoutBranch(String branchName) {
+        checkInitializedGitletDirectory();
+        Branch targetBranch = branchStore.getBranch(branchName);
+        if (targetBranch == null) {
+            exitWithMessage("No such branch exists.");
+        }
+        if(branchName.equals(getCurrentBranch().getName())){
+            exitWithMessage("No need to checkout the current branch.");
+        }
+        if(targetBranch.getCommitHash() == null){
+            exitWithMessage("error: branch points to a non-existent commit.");
+        }
+        checkoutCommit(targetBranch.getCommitHash());
+        setCurrentBranch(targetBranch);
+    }
 
     /*Utils */
     private void checkInitializedGitletDirectory() {
         if (!GITLET_DIR.exists()) {
             exitWithMessage("Not in an initialized Gitlet directory.");
         }
+    }
+
+    public void setCurrentBranch(Branch branch) {
+        head.setHead(branch);
     }
 
     public Branch getCurrentBranch(){
