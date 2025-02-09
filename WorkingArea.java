@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.util.List;
 
 import static gitlet.Utils.*;
 
@@ -19,6 +20,11 @@ public class WorkingArea {
         File file=GetFile(fileName);
         return file.delete();
     }
+
+    public List<String> getAllFileNames(){
+        return plainFilenamesIn(WORKING_DIR);
+    }
+
 
     public File GetFile(String fileName) {
         File file=join(WORKING_DIR, fileName);
