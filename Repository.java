@@ -198,6 +198,24 @@ public class Repository {
         branchStore.removeBranch(branch);
     }
 
+    public void checkoutFile(String fileName , String commitHash){
+        checkInitializedGitletDirectory();
+        Commit commit = commitStore.getCommitByHash(commitHash);
+        if(commit == null){
+            exitWithMessage("No commit found.");
+        }
+        if(!commit.containsFile(fileName)){
+            exitWithMessage("File does not exist in the last commit");
+        }
+        String blobHash = commit.getTrackedFiles().get(fileName);
+        File blob = blobStore.GetBlob(blobHash);
+        String blobContent = readContentsAsString(blob);
+        workingArea.SaveFile(blobContent , fileName);
+    }
+    public void checkoutFile(String fileName){
+        checkInitializedGitletDirectory();
+        checkoutFile(fileName , getCurrentCommit().getHash());
+    }
 
 
     /*Utils */
