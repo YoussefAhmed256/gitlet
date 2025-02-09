@@ -11,10 +11,8 @@ public class WorkingArea {
         this.WORKING_DIR = workingDir;
     }
 
-    public void SaveFile(File file) {
-        String content=readContentsAsString(file);
-        String hash =sha1(content);
-        File workingFile = join(WORKING_DIR, hash);
+    public void SaveFile(String content , String fileName) {
+        File workingFile = join(WORKING_DIR, fileName);
         writeContents(workingFile,content);
     }
     public boolean DeleteFile(String fileName) {
