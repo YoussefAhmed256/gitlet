@@ -292,17 +292,14 @@ public class Repository {
 
             if(split == null && other == null){
                 workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(head)) , fileName);
-                continue;
             }
             if(Objects.equals(head,split) && !Objects.equals(other,split)){
                 stagingArea.StageFileForAddition(readContentsAsString(blobStore.GetBlob(split)) , fileName);
                 workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(split)) , fileName);
-                continue;
             }
 
             if(!Objects.equals(head , split) && Objects.equals(other,split)){
                 workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(head)) , fileName);
-                continue;
             }
 
             if(!Objects.equals(head , split) && !Objects.equals(other,split) && Objects.equals(head , other)){
@@ -316,7 +313,6 @@ public class Repository {
             if(other == null && Objects.equals(head,split)){
                 stagingArea.StageFileForRemoval(workingArea.GetFile(fileName));
                 workingArea.DeleteFile(fileName);
-                continue;
             }
 
             if(
