@@ -19,7 +19,7 @@ public class Main {
                 repo.commit(args[1]);
                 break;
             case "merge":
-
+                repo.merge(args[1]);
                 break;
             case "branch":
                 repo.branch(args[1]);
@@ -33,7 +33,7 @@ public class Main {
             case "checkout":
                 if (args.length == 1)
                     repo.checkoutBranch(args[0]);
-                if(args.length == 3 && args[1] == "--")
+                else if(args.length == 3 && args[1] == "--")
                     repo.checkoutFile(args[2]);
                 else if (args.length == 4 && args[2] == "--")
                     repo.checkoutFile(args[3], args[1]);

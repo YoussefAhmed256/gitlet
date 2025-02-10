@@ -253,18 +253,140 @@ public class Repository {
         setCurrentBranch(targetBranch);
     }
 
+    public void merge(String branchName){
+        checkInitializedGitletDirectory();
+        if(!stagingArea.IsEmpty()){
+            exitWithMessage("You have uncommitted changes.");
+        }
+        if(branchStore.getBranch(branchName) == null){
+            exitWithMessage("A branch with that name does not exist.");
+        }
+        if(branchName.equals(getCurrentBranch().getName())){
+            exitWithMessage("Cannot merge a branch with itself.");
+        }
+        Branch headBranch = getCurrentBranch();
+        Branch otherBranch = branchStore.getBranch(branchName);
+        Commit splitPoint = findSplitPoint(headBranch , otherBranch);
+
+        if(splitPoint == null){
+            exitWithMessage("Internal error : Could not find split point.");
+        }
+        if(splitPoint.getHash().equals(otherBranch.getCommitHash())){
+            exitWithMessage("Given branch is an ancestor of the current branch.");
+        }
+
+        if(splitPoint.getHash().equals(headBranch.getCommitHash())){
+            checkoutBranch(otherBranch.getName());
+            exitWithMessage("Current branch fast-forwarded.");
+        }
+        Commit headCommit = commitStore.getCommitByHash(headBranch.getCommitHash());
+        Commit otherCommit = commitStore.getCommitByHash(otherBranch.getCommitHash());
+
+        boolean isConflict = false;
+        HashSet<String> processedFiles = new HashSet<>();
+        for(String fileName : headCommit.getTrackedFiles().keySet()){
+            processedFiles.add(fileName);
+            String split = splitPoint.getTrackedFiles().get(fileName);
+            String head = headCommit.getTrackedFiles().get(fileName);
+            String other = otherCommit.getTrackedFiles().get(fileName);
+
+            if(split == null && other == null){
+                workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(head)) , fileName);
+                continue;
+            }
+            if(Objects.equals(head,split) && !Objects.equals(other,split)){
+                stagingArea.StageFileForAddition(readContentsAsString(blobStore.GetBlob(split)) , fileName);
+                workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(split)) , fileName);
+                continue;
+            }
+
+            if(!Objects.equals(head , split) && Objects.equals(other,split)){
+                workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(head)) , fileName);
+                continue;
+            }
+
+            if(!Objects.equals(head , split) && !Objects.equals(other,split) && Objects.equals(head , other)){
+                workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(head)) , fileName);
+            }
+
+            if(Objects.equals(head , split) && Objects.equals(other,split)){
+                workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(head)) , fileName);
+            }
+
+            if(other == null && Objects.equals(head,split)){
+                stagingArea.StageFileForRemoval(workingArea.GetFile(fileName));
+                workingArea.DeleteFile(fileName);
+                continue;
+            }
+
+            if(
+                    split == null && !head.equals(other) ||
+                    !Objects.equals(head,split) && !Objects.equals(other,split)
+            ){
+                String currentCommitFileContent = readContentsAsString(blobStore.GetBlob(headCommit.getTrackedFiles().get(fileName)));
+                String givenCommitFileContent = readContentsAsString(blobStore.GetBlob(otherCommit.getTrackedFiles().get(fileName)));
+                String concatContent = currentCommitFileContent + "\n=======\n"+(givenCommitFileContent);
+                workingArea.SaveFile(concatContent, fileName);
+                stagingArea.StageFileForAddition(workingArea.GetFile(fileName));
+                isConflict = true;
+            }
+            if(other == null && !head.equals(split)){
+                workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(head)) , fileName);
+            }
+        }
+        // Process Files that are not exists in map of current commit
+        for(String fileName : otherCommit.getTrackedFiles().keySet()){
+            if(processedFiles.contains(fileName)){
+                continue;
+            }
+            if(
+                    !splitPoint.containsFile(fileName) ||
+                    !otherCommit.getTrackedFiles().get(fileName).equals(splitPoint.getTrackedFiles().get(fileName))
+            ){
+                workingArea.SaveFile(readContentsAsString(blobStore.GetBlob(otherCommit.getTrackedFiles().get(fileName))) , fileName);
+                stagingArea.StageFileForAddition(readContentsAsString(blobStore.GetBlob(otherCommit.getTrackedFiles().get(fileName))) , fileName);
+            }
+        }
+        String commitMessage = String.format(
+                "Merged %s into %s.",
+                otherBranch.getName(),
+                headBranch.getName());
+        commit(commitMessage, otherCommit.getHash());
+        if (isConflict){
+            System.out.println("Encountered a merge conflict.");
+        }
+    }
+
     /*Utils */
+    private Commit findSplitPoint(Branch currentBranch , Branch givenBranch){
+        HashSet<String> visitedHashes = new HashSet<>();
+        String currentHash = currentBranch.getCommitHash();
+        while (currentHash != null) {
+            visitedHashes.add(currentHash);
+            currentHash = commitTree.getParent(currentHash);
+        }
+        String givenHash = givenBranch.getCommitHash();
+        while (givenHash != null) {
+            if(visitedHashes.contains(givenHash)){
+                return commitStore.getCommitByHash(givenHash);
+            }
+            givenHash = commitTree.getParent(givenHash);
+        }
+        return null;
+    }
+
+
     private void checkInitializedGitletDirectory() {
         if (!GITLET_DIR.exists()) {
             exitWithMessage("Not in an initialized Gitlet directory.");
         }
     }
 
-    public void setCurrentBranch(Branch branch) {
+    private void setCurrentBranch(Branch branch) {
         head.setHead(branch);
     }
 
-    public Branch getCurrentBranch(){
+    private Branch getCurrentBranch(){
         return branchStore.getBranch(head.getHead());
     }
 
