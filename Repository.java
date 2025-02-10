@@ -95,6 +95,8 @@ public class Repository {
         Commit newcommit = new Commit(message,getCurrentCommit().getHash(),secondParent,null,Tracked) ;
         commitStore.saveCommit(newcommit);
 
+        commitTree.addCommit(getCurrentCommit().getHash() , newcommit.getHash());
+
         Branch newBranch = getCurrentBranch();
         newBranch.setCommitHash(sha1(newcommit.getHash()));
         branchStore.saveBranch(newBranch);
