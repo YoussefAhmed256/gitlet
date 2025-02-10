@@ -25,6 +25,11 @@ public class StagingArea {
         writeContents(stagedFile, readContentsAsString(file));
         return stagedFile;
     }
+    
+    public void StageFileForAddition(String contents , String fileName){
+        File stagedFile = join(ADDITION_Dir, fileName);
+        writeContents(stagedFile, contents);
+    }
 
     public File StageFileForRemoval(File file){
         String name=file.getName();
@@ -86,7 +91,7 @@ public class StagingArea {
             UnstageFileForRemoval(stagedFile);
         }
     }
-    
+
     public boolean IsEmpty(){
         return plainFilenamesIn(ADDITION_Dir).isEmpty() || plainFilenamesIn(REMOVAL_Dir).isEmpty() ;
     }
